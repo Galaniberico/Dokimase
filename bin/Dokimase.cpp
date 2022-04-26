@@ -91,7 +91,7 @@ void error (TERROR err, const string &errArg){
 }
 void argsCheck(int argc, char* args[],TFlags &flag){
     for(int i = 1; i < argc && !flag.Error; i++){
-        if(!strcmp("-h", args[i]) || !strcmp("--hide-compilation", args[i])){
+        if(!strcmp("-h", args[i]) || !strcmp("--hide", args[i])){
             if(!flag.Hide){
                 flag.Hide = true;
             } else error(ERR_ARG_REP, args[i]);
@@ -319,14 +319,14 @@ void getHAndCplusplusFiles(vector<TNecessaryFile> &necessaryFiles, const string 
         closedir (dir);
     }
 }
-void compilingHAndCplusplusFiles(vector<TNecessaryFile> &necessaryFiles, bool flag){
+void compilingHAndCplusplusFiles(vector<TNecessaryFile> &necessaryFiles, bool Hide){
     DIR *dir;
     struct dirent *ent;
     for(const TNecessaryFile &nf : necessaryFiles){
         if(!nf.name.empty() && !nf.cppFile.empty() && !nf.hFile.empty()){
             string command = "g++ -Wall -g -c -Iinclude -o compilados/archivos-necesarios/" + nf.name + ".o " + nf.cppFileDir ;
-            if(flag)
-                command += " >& ./trash/" + nf.name + "_comp.out";
+            if(Hide)
+                command += " > ./trash/" + nf.name + "_comp.out 2>&1";
             system(command.c_str());
         }
     }
@@ -366,12 +366,12 @@ void compilingTests(const vector<TTest> &tests, const vector<TNecessaryFile> &ne
     unsigned done = 0;
     for(const TTest &test : tests){
         if(Hide){
-            showProcess(done, tests.size(), "\nProceso de compilacion [");
+            showProcess(done, tests.size(), "\n\tProceso de compilacion [");
         }
         string command = "g++ -Wall -g -Iinclude -D DEBUG " + test.dir + command_obj_template + " -o compilados/" +
                          test.nameCompiled;
         if(Hide)
-            command += " >& trash/" + test.nameCompiled + "_comp.out";
+            command += " > trash/" + test.nameCompiled + "_comp.out 2>&1";
         system(command.c_str());
         done++;
         if(Hide) system("clear");
@@ -407,7 +407,7 @@ vector<tuple<string, string>> executeTestArgs(const vector<TTest> &tests, const 
     }
     if(tests.size() == 1)
         for(const tuple<string, string> &arg : arguments){
-            string command = "./compilados/" + tests[0].nameCompiled + " " + get<1>(arg) + " >& compilados/salidas/" + get<0>(arg) + ".out";
+            string command = "./compilados/" + tests[0].nameCompiled + " " + get<1>(arg) + " >& compilados/salidas/" + get<0>(arg) + ".out 2>&1";
             system(command.c_str());
         }
     if(Hide) system("clear");
@@ -526,8 +526,8 @@ void compareOutputsTestsArg(const vector<tuple<string, string>> &args, const TCo
 void executeValgrind(const vector<TTest> &tests, const bool &Hide){
     unsigned done = 0;
     for(const TTest &test : tests){
-        if(Hide) showProcess(done, tests.size(), "\nEjecutando Valgrind: [");
-        string command = "valgrind --tool=memcheck --leak-check=full ./compilados/" + test.nameCompiled + " >& compilados/salidas/" + test.nameCompiled + "_valgrind.out";
+        if(Hide) showProcess(done, tests.size(), "\n\tEjecutando Valgrind: [");
+        string command = "valgrind --tool=memcheck --leak-check=full ./compilados/" + test.nameCompiled + " > compilados/salidas/" + test.nameCompiled + "_valgrind.out 2>&1";
         system(command.c_str());
         done++;
         if(Hide) system("clear");
