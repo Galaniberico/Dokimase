@@ -169,8 +169,8 @@ void version(){
     cout << "\nDokimase by Alejandro Galan Perez ©" << endl;
     cout << "Version " << VERSION << endl << endl;
     cout << "       El autor solo se hace responsable del programa que compila, ejecuta y compara ficheros ajenos a él" << endl;
-    cout << "y no se hace responsable de la procedencia de estos ni su mal uso. Además queda prohibida cualquier venta" << endl;
-    cout << "o distribucion del testeador de forma ajena al autor." << endl << endl;
+    cout << "y no se hace responsable de la procedencia de estos ni su mal uso. Además toda distribucion o venta del mismo" << endl;
+    cout << "queda sujeto ante las condiciones de la licencia proporcionada" << endl;
     cout << "Cualquier reporte de bugs o peticiones de cambio constructivas seran bien recibidas a alexgalanp@gmail.com" << endl << endl;
 }
 TConfig readConfigFile(){
